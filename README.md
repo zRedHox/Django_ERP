@@ -5,4 +5,4 @@
 ในการ key , read ,add ,edit , update ข้อมูลและที่สำคัญ offline mode 100% ไม่ออก internet เลย
 
 Overview หน้าตาของโปรแกรมหลังเสร็จ
-https://github.com/zRedHox/Django_ERP/issues/1#issue-1980374948
+![image](https://github.com/zRedHox/Django_ERP/assets/30298730/536a30da-1087-452a-b845-539077f48404)
