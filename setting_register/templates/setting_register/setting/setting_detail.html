@@ -1,0 +1,13 @@
+{% extends 'setting_register/setting/base.html' %}
+
+{% block content %}
+<h2>Setting Details</h2>
+<p>Setting: {{ setting.setting }}</p>
+<p>Description: {{ setting.description }}</p>
+<p>Short Description: {{ setting.sh_desc }}</p>
+<p>Last User: {{ setting.lastuser }}</p>
+<a href="{% url 'setting_edit' setting.setting %}" class="btn btn-warning">Edit</a>
+<a href="{% url 'setting_delete' setting.setting %}" class="btn btn-danger">Delete</a>
+<a href="{% url 'mock1' %}" class="btn btn-secondary">Back to List</a>
+<hr>
+{% endblock %}

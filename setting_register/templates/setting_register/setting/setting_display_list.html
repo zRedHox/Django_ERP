@@ -1,0 +1,59 @@
+{% extends 'setting_register/setting/index.html' %}
+
+{% block content %}
+<div class="w3-panel w3-white" style="height: 800px; width: 100%; overflow: scroll;" >
+<h2 style="margin-top: 70px;">การฝัง</h2>
+<a href="{% url 'setting_create' %}" class="btn btn-primary">Create Setting</a>
+<table class="table">
+  <thead>
+    <tr>
+      <th>Setting</th>
+      <th>Description</th>
+      <th>Short Description</th>
+      <th>Last User</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for setting in settings %}
+    <tr>
+      <td>{{ setting.setting }}</td>
+      <td>{{ setting.description }}</td>
+      <td>{{ setting.sh_desc }}</td>
+      <td>{{ setting.lastuser }}</td>
+      <td>
+        <a href="{% url 'setting_detail' setting.setting %}" class="btn btn-info">Detail</a>
+        <a href="{% url 'setting_edit' setting.setting %}" class="btn btn-warning">Edit</a>
+        <!-- <button type="button" class="btn btn-danger" data-toggle="modal"
+          data-target="#deleteModal{{ setting.setting }}">Delete</button> -->
+        <!-- Modal -->
+        <div class="modal fade" id="deleteModal{{ setting.setting }}" tabindex="-1" role="dialog"
+          aria-labelledby="deleteModalLabel{{ setting.setting }}" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel{{ setting.setting }}">Confirm Deletion</h5>
+                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close">
+                  
+                </button>
+              </div>
+              <div class="modal-body">
+                Are you sure you want to delete setting {{ setting.setting }}?
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+                <form action="{% url 'setting_delete' setting.setting %}" method="POST">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-danger">Yes</button>
+                </form>
+                </div>
+                </div>
+                </div>
+              </div>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endblock %}

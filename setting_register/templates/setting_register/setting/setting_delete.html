@@ -1,0 +1,15 @@
+{% extends 'setting_register/setting/base.html' %}
+
+{% block content %}
+<h2>Delete Setting</h2>
+<p>Are you sure you want to delete the following setting?</p>
+<p>Setting: {{ setting.setting }}</p>
+<p>Description: {{ setting.description }}</p>
+<p>Short Description: {{ setting.sh_desc }}</p>
+<p>Last User: {{ setting.lastuser }}</p>
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Delete</button>
+    <a href="{% url 'setting_display_list' %}" class="btn btn-secondary">Cancel</a>
+</form>
+{% endblock %}

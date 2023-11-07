@@ -1,0 +1,21 @@
+ function onScanSuccess(decodedText, decodedResult) {
+                var itemNameInput = document.getElementById("item-name-input");
+                if (itemNameInput.value.length === 0) {
+                  itemNameInput.value = decodedText;
+                  document.getElementById("scanner-container").style.display = "none";
+                  html5QrcodeScanner.clear();
+                }
+              }
+
+              function startScanner() {
+                var itemNameInput = document.getElementById("item-name-input");
+                if (itemNameInput.value.length > 0) {
+                  itemNameInput.value = "";
+                }
+                var scannerContainer = document.getElementById("scanner-container");
+                scannerContainer.style.display = "block";
+                scannerContainer.scrollIntoView({ behavior: "smooth", block: "center", inline: "center" });
+                var html5QrcodeScanner = new Html5QrcodeScanner(
+                  "scanner-container", { fps: 30, qrbox: "100%" });
+                html5QrcodeScanner.render(onScanSuccess);
+              }

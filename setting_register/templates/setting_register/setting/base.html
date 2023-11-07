@@ -1,0 +1,28 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{% static 'setting_register/css/bootstrap.min.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'setting_register/css/font-awesome.css' %}" />
+    <title>Setting Registration</title>
+</head>
+<body>
+    <div class="container">
+        <div class="col-md-10 offset-md-1 mt-5">
+            <div class="jumbotron">
+                <h1 class="display-4">Base Interface</h1>
+                <p class="lead">Python django for CRUD operations</p>
+                <hr class="my-4">
+                {% block content %}
+                {% endblock content %}
+              </div>
+        </div>
+    </div>
+
+
+   
+</body>
+</html>

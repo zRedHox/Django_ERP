@@ -1,0 +1,2151 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!--* ทำให้เริ่มต้น full screen ทั้งในคอมและ mobile --->
+  <meta name="theme-color" content="#FFFFFF" />
+  <!--* import css --->
+  <link rel="stylesheet" type="text/css" href="{% static 'setting_register/css/w3style2.css' %}">
+
+  <link rel="stylesheet" type="text/css" href="{% static 'setting_register/css/fonts.css' %}" />
+  <link rel="stylesheet" type="text/css" href="{% static 'setting_register/css/bootstrap.min.css' %}" />
+  <script src="{% static 'js/html5-qrcode.js' %}"></script>
+  <link rel="manifest" href="{% static 'manifest.json' %}" />
+  <link rel="apple-touch-icon" href="{% static 'img/logo192.png' %}">
+  <title>MasterData</title>
+</head>
+<!--* ฟังชั่นที่จะให้เริ่มตั้งแต่แรกตอนโหลด page ให้มาใส่ไว้ที่ body --->
+
+<body onload="autoClickFirstLink(),autoclickcolumn(),autoClickButton(),autoClickFirstCellBomlist(),autoClickFirstmetalname()">
+  <div class="w3-top">
+    <div class="w3-bar w3-white" align-items-center>
+      <a href="#" onclick="showPage('home')"
+        class="w3-bar-item w3-button w3-border-right w3-border-bottom">ข้อแนะนำการผลิต</a>
+      <a href="#" onclick="showPage('page1')"
+        class="w3-bar-item w3-button w3-border-right w3-border-bottom">รายละเอียด</a>
+      <a href="#" onclick="showPage('page2')"
+        class="w3-bar-item w3-button w3-border-right w3-border-bottom">รายละเอียดโมเดล</a>
+      <a href="#" onclick="showPage('page3')"
+        class="w3-bar-item w3-button w3-border-right w3-border-bottom">การผลิตโมเดล(Routing)</a>
+      <a href="#" onclick="showPage('page4')" class="w3-bar-item w3-button w3-border-right w3-border-bottom">รายละเอียดโลหะ</a>
+ 
+      <div class="w3-right w3-bar-item ">
+
+        <!-- Add this div to contain the scanner -->
+        <div id="scanner-container" style="display: none;"></div>
+
+        <!-- Add the search form -->
+        <form action="#" method="get" id="search-form">
+          <input type="text" name="item_name" id="item-name-input" placeholder="ค้นหาเบอร์โมเดล"
+            oninput="this.value = this.value.toUpperCase()" />
+          <button type="submit"><i class="fa fa-search" style="align-items: right;">ค้นหา</i></button>
+          <button type="button" onclick="startScanner()"><i class="fa fa-camera">Scan Barcode</i></button>
+        </form>
+        <div id="scanner-container" style="display:none; height: 700px; width: 500px; margin:auto; overflow:auto"></div>
+        <!-- <div id="result"></div> -->
+        <hr>
+
+        <script>
+          function submitForm() {
+            document.getElementById("search-form").submit();
+          }
+
+          function onScanSuccess(decodedText, decodedResult) {
+            var itemNameInput = document.getElementById("item-name-input");
+            if (itemNameInput.value.length === 0) {
+              itemNameInput.value = decodedText;
+              submitForm();
+              document.getElementById("scanner-container").style.display = "none";
+              html5QrcodeScanner.clear();
+            }
+          }
+
+          function startScanner() {
+            var itemNameInput = document.getElementById("item-name-input");
+            if (itemNameInput.value.length > 0) {
+              itemNameInput.value = "";
+            }
+            var scannerContainer = document.getElementById("scanner-container");
+            scannerContainer.style.display = "block";
+            Html5Qrcode.getCameras().then(devices => {
+              if (devices && devices.length) {
+                const cameraId = devices[0].id;
+
+                const html5QrCode = new Html5Qrcode(
+                  "scanner-container"
+                );
+                const config = { fps: 30, qrbox: { width: 350, height: 350 } };
+                // If you want to prefer back camera
+                html5QrCode.start({ facingMode: "environment" }, config, onScanSuccess);
+              }
+            }).catch(err => {
+              // handle error
+            });
+          }
+        </script>
+
+
+      </div>
+    </div>
+  </div>
+
+  <hr style="border: none; height: 1px; background-color: #ffffff;" />
+  <hr style="border: none; height: 1px; background-color: #ffffff;" />
+  <hr style="border: none; height: 1px; background-color: #ffffff;" />
+  <hr style="border: none; height: 1px; background-color: #ffffff;" />
+
+
+  <div style="height: 50px;"></div>
+
+  <!--=============================== home =============================-->
+  <!--! cloud url http://172.17.20.11/remote.php/dav/files/ituser/ --->
+  <div class="content" id="home">
+    <div class="w3-container">
+
+
+
+      <div class="w3-row">
+        <div class="w3-col s4">
+
+          <p></p>
+          <h1 class="card-text"><span class="badge bg-primary " ">เบอร์โมเดล : {{item_name}}</span></h1>
+                      
+                        </div>
+            <div class=" w3-col s8 ">
+              <div class=" image-container " style=" position: relative; display: inline-block;">
+              <img src="https://172.17.20.27/database/api/images/{{item_name}}/" onclick="displayFullSize(this)"
+                style="max-width: 150px; height: auto;" />
+              <span class="btn btn-primary " style="position: absolute; bottom: -35px; left: 35px;">รูปโมเดล</span>
+        </div>
+
+        <div class="image-container " style="position: relative;
+                display: inline-block;">
+          <img src="https://172.17.20.27/database/api/images_gfsol/{{item_name}}/" onclick="displayFullSize(this)"
+            style="padding-left: 10px; max-width: 150px; height: auto;
+                              " />
+          <span class="btn btn-primary " style="position: absolute; bottom: -35px; left: 35px;">รูปเชื่อม</span>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="w3-row" style="height: 30px;">
+
+    </div>
+
+
+
+    <script>
+      function displayFullSize(img) {
+        // Create the enlarged image element
+        var fullSizeImg = document.createElement("img");
+        fullSizeImg.src = img.src;
+        fullSizeImg.style.maxWidth = "100%";
+        fullSizeImg.style.maxHeight = "100%";
+        fullSizeImg.style.position = "fixed";
+        fullSizeImg.style.top = "0";
+        fullSizeImg.style.left = "0";
+        fullSizeImg.style.right = "0";
+        fullSizeImg.style.bottom = "0";
+        fullSizeImg.style.margin = "auto";
+        fullSizeImg.style.zIndex = "999999";
+        fullSizeImg.onclick = function () {
+          document.body.removeChild(fullSizeImg);
+          document.body.removeChild(overlay);
+        };
+        document.body.appendChild(fullSizeImg);
+
+        // Create an overlay element to darken the background
+        var overlay = document.createElement("div");
+        overlay.classList.add("overlay");
+        overlay.onclick = function () {
+          document.body.removeChild(fullSizeImg);
+          document.body.removeChild(overlay);
+        };
+        document.body.appendChild(overlay);
+      }
+    </script>
+  </div>
+
+
+  <div class="w3-row">
+    <div class="w3-col s3  w3-left">
+      <h3 class="card-text"><span class="badge bg-danger">ข้อแนะนำการผลิต</span></h3>
+
+      <div class="w3-bar-block w3-white" style="height: 750px; overflow-y: auto">
+        {% for item in mainroute_datatable %}
+
+        <a href="#" class="w3-bar-item w3-button" dataroute="{{ item.rt_main }}"
+          prospectable="{{prospec_datatable_json}}" onclick="displayPdSpec(this)"
+          style="border-bottom: 1px solid #ccc;">{{item.rt_main}} | {{ item.rt_desc }}</a>
+
+        {% endfor %}
+      </div>
+    </div>
+    <div class="w3-col s9 w3-left">
+
+      <div class="w3-container">
+        <div id="pro_spec" class="w3-container" style="overflow-y: auto">
+          <div class="mb-3">
+            <p></p>
+            <textarea class="form-control bg-white" id="pro_spec3" rows="3" style="height: 700px;" readonly> </textarea>
+          </div>
+          <div class="w3-container" style="height: 30px;">
+            <pre style="display:none; width: 500px; height: 90px;"></pre> <!--* เอาไว้ใส่ pretag --->
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+    <div class="w3-container" style="height: 10px;">
+      <pre></pre> <!--* เอาไว้ใส่ pretag --->
+    </div>
+  </div>
+
+  <script>
+    function autoClickFirstLink() {
+      // Get the first link element
+      var firstLink = document
+        .getElementsByClassName("w3-bar-block")[0]
+        .getElementsByTagName("a")[0];
+
+      // Trigger a click on the first link
+      firstLink.click();
+    }
+
+    function displayPdSpec(element) {
+      var dataroute = element.getAttribute("dataroute");
+      var pro_spectable = JSON.parse(element.getAttribute("prospectable"));
+      var specText = "";
+
+      for (var i = 0; i < pro_spectable.length; i++) {
+        var item = pro_spectable[i];
+
+        if (item["prospec_rt_main"] === dataroute) {
+          document.getElementById("pro_spec").getElementsByTagName("pre")[0].innerHTML = item["pd_spec"];
+          document.getElementById("pro_spec2").getElementsByTagName("pre")[0].innerHTML = item["pd_spec"];
+          specText += item["pd_spec"] + "\n";
+          break;
+        } else {
+          document.getElementById("pro_spec").getElementsByTagName("pre")[0].innerHTML = "";
+          document.getElementById("pro_spec2").getElementsByTagName("pre")[0].innerHTML = "";
+        }
+      }
+
+      document.getElementById("pro_spec3").value = specText;
+    }
+  </script>
+  </div>
+  </div>
+
+  <!--=========================== END OF home ===========================-->
+
+  <!--=============================== page1 =============================-->
+
+  <div class="content" id="page1" style="display: none">
+    <div class="w3-row">
+      <div class="w3-col s4">
+
+        <p></p>
+        <h1 class="card-text"><span class="badge bg-primary " ">เบอร์โมเดล : {{item_name}}</span></h1>
+                            
+                              </div>
+                  <div class=" w3-col s8 ">
+                    <div class=" image-container " style=" position: relative; display: inline-block;">
+            <img src="https://172.17.20.27/database/api/images/{{item_name}}/" onclick="displayFullSize(this)"
+              style="max-width: 150px; height: auto;" />
+            <span class="btn btn-primary " style="position: absolute; bottom: -35px; left: 35px;">รูปโมเดล</span>
+      </div>
+
+      <div class="image-container " style="position: relative;
+                      display: inline-block;">
+        <img src="https://172.17.20.27/database/api/images_gfsol/{{item_name}}/" onclick="displayFullSize(this)" style="padding-left: 10px; max-width: 150px; height: auto;
+                                    " />
+        <span class="btn btn-primary " style="position: absolute; bottom: -35px; left: 35px;">รูปเชื่อม</span>
+      </div>
+    </div>
+
+  </div>
+  <div class="w3-row" style="height: 50px;">
+
+  </div>
+  <div class="w3-container">
+    <!-- <div class="w3-row" style="height: 35px;">
+          <div class="w3-col s12 w3-green w3-center" style="height: 35px;">
+            <p class="large">ชื่อ Model : {{item_name}}</p>
+          </div>
+        </div> -->
+    <hr style="border: none; height: 1px; background-color: #ffffff;" />
+
+    <div class="w3-row">
+      <div class="w3-col s4 w3-white w3-left">
+        <div class="w3-container" style="overflow: auto; ">
+          <p></p>
+          <h5><span class="badge bg-primary">ประเภทงาน</span></h5>
+          <input class="form-control form-control-sm" type="text" placeholder=".form-control-sm"
+            value="{{ pro_type }} {{pro_type_desc}}" disabled readonly>
+          <p class="card-text"><small class="text-muted"></small></p>
+          <h5><span class="badge bg-primary">น้ำหนัก 925 มาตรฐาน</span></h5>
+          <input class="form-control form-control-sm" type="text" placeholder=".form-control-sm"
+            value="{{ std_925_wt }}" disabled readonly>
+          <p class="card-text"><small class="text-muted"></small></p>
+          <h5><span class="badge bg-primary">ประเภทพิมพ์</span></h5>
+          <input class="form-control form-control-sm" type="text" placeholder="" value="" disabled readonly>
+          <p class="card-text"><small class="text-muted"></small></p>
+          <h5><span class="badge bg-primary">แบบร่วม</span></h5>
+          <input class="form-control form-control-sm" type="text" placeholder="" value="" disabled readonly>
+          <p class="card-text"><small class="text-muted"></small></p>
+          <h5><span class="badge bg-primary">น้ำหนักพิมพ์</span></h5>
+          <input class="form-control form-control-sm" type="text" placeholder=".form-control-sm" value="{{ mold_wt }}"
+            disabled readonly>
+          <p class="card-text"><small class="text-muted"></small></p>
+          <h5><span class="badge bg-primary">โลหะพิมพ์</span></h5>
+          <input class="form-control form-control-sm" type="text" placeholder=".form-control-sm"
+            value="{{ mold_metal }}" disabled readonly>
+          <p class="card-text"><small class="text-muted"></small></p>
+          <h5><span class="badge bg-primary">พื้นที่ผิว ตร.ซม.</span></h5>
+          <input class="form-control form-control-sm" type="text" placeholder=".form-control-sm" value="{{ surface }}"
+            disabled readonly>
+          <p class="card-text"><small class="text-muted"></small></p>
+          <h5><span class="badge bg-primary">hallmark</h5>
+          <input class="form-control form-control-sm" type="text" placeholder=".form-control-sm" value="{{ hallmark }}"
+            disabled readonly>
+          <p class="card-text"><small class="text-muted"></small></p>
+          <h5><span class="badge bg-primary">เกรด</span></h5>
+          <input class="form-control form-control-sm" type="text" placeholder=".form-control-sm" value="{{ pd_gd }}"
+            disabled readonly>
+          <p class="card-text"><small class="text-muted"></small></p>
+          <hr style="border: none; height: 1px; background-color: #ffffff;" />
+        </div>
+      </div>
+      <div class="w3-col s4 w3-white w3-left">
+        <div class="w3-container" style="overflow: auto; ">
+          <!--! จะให้ overflow ไหม --->
+          <p></p>
+          <h5><span class="badge bg-primary">แหวน</span></h5>
+          <p class="card-text"><small class="text-muted"></small></p>
+          <div class="w3-container">
+            {%for item in pro_ringsize_table%} {item.ringsize} {%endfor%}
+          </div>
+          <hr />
+          <h5><span class="badge bg-primary">รายการชุบ</h5>
+          <p class="card-text"><small class="text-muted"></small></p>
+          <table class="w3-table-all w3-hoverable" style="overflow: auto">
+            {% for item in table_procoat %}
+            <tr>
+              <td style="font-family: anakotmai-l" procode="{{item.pro_code}}" plattype="{{item.plat_type}}"
+                tableprocoat="{{table_procoat_json}}" onclick="displayProCoatDesc(this)">
+                {{ item.plat_type }}
+              </td>
+              <td style="font-family: anakotmai-l" procode="{{item.pro_code}}" plattype="{{item.plat_type}}"
+                tableprocoat="{{table_procoat_json}}" onclick="displayProCoatDesc(this)">
+                {{ item.plat_type_desc }}
+              </td>
+            </tr>
+            {% endfor %}
+          </table>
+
+          <hr />
+          {% for item in table_procoat %}
+          <div id="procoat_desc" class="w3-container" remark_procode="{{item.pro_code}}"
+            remark_plattype="{{item.plat_type}}">
+            <pre style="white-space: pre-wrap; word-break: break-word; font-size: 20px;">
+
+                          </pre>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!--! WARNING --->
+      <!--! สคริปเลือกใช้คำอธิบาย pro_coat desc --->
+
+      <script>
+        function autoclickcolumn() {
+          var tdElement = document.querySelector(
+            ".w3-table-all td:first-child"
+          );
+          if (tdElement) {
+            displayProCoatDesc(tdElement);
+          }
+        }
+
+        function displayProCoatDesc(tdElement) {
+          var proCode = tdElement.getAttribute("procode");
+          var platType = tdElement.getAttribute("plattype");
+          var tableProCoat = JSON.parse(
+            tdElement.getAttribute("tableprocoat")
+          );
+          //console.log(tableProCoat);
+
+          for (var i = 0; i < tableProCoat.length; i++) {
+            var item = tableProCoat[i];
+            //console.log(item["pro_code"]);
+            if (
+              item["pro_code"] === proCode &&
+              item["plat_type"] === platType
+            ) {
+              document
+                .getElementById("procoat_desc")
+                .getElementsByTagName("pre")[0].innerHTML =
+                item["procoat_remark"];
+
+              break;
+            } else {
+              document
+                .getElementById("procoat_desc")
+                .getElementsByTagName("pre")[0].innerHTML = "";
+            }
+          }
+        }
+      </script>
+
+      <div class="w3-col s4 w3-white w3-left">
+        <div class="w3-container" style="overflow: auto; height: 400px">
+
+          <p></p>
+          <h5><span class="badge bg-primary">tag1</span></h5>
+          <input class="form-control form-control-sm" type="text" placeholder=".form-control-sm"
+            value="{{ search_tag1 }}" disabled readonly>
+          <p class="card-text"><small class="text-muted"></small></p>
+          <h5><span class="badge bg-primary">tag2</span></h5>
+          <input class="form-control form-control-sm" type="text" placeholder=".form-control-sm"
+            value="{{ search_tag2 }}" disabled readonly>
+          <p class="card-text"><small class="text-muted"></small></p>
+          <h5><span class="badge bg-primary">tag3</span></h5>
+          <input class="form-control form-control-sm" type="text" placeholder=".form-control-sm"
+            value="{{ search_tag3 }}" disabled readonly>
+          <p class="card-text"><small class="text-muted"></small></p>
+          <h5><span class="badge bg-primary">หมายเหตุ</span></h5>
+          <input class="form-control form-control-sm" type="text" placeholder="" value="{{ remark }}" disabled readonly>
+          <p class="card-text"><small class="text-muted"></small></p>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <!--=========================== END OF page1 ===========================-->
+
+  <!--=============================== page2 =============================-->
+
+
+
+  <div class="content" id="page2" style="display: none">
+    <div class="w3-row">
+      <div class="w3-col s4">
+
+        <p></p>
+        <h1 class="card-text"><span class="badge bg-primary " ">เบอร์โมเดล : {{item_name}}</span></h1>
+                            
+                              </div>
+                  <div class=" w3-col s8 ">
+                    <div class=" image-container " style=" position: relative; display: inline-block;">
+            <img src="https://172.17.20.27/database/api/images/{{item_name}}/" onclick="displayFullSize(this)"
+              style="max-width: 150px; height: auto;" />
+            <span class="btn btn-primary " style="position: absolute; bottom: -35px; left: 35px;">รูปโมเดล</span>
+      </div>
+
+      <div class="image-container " style="position: relative;
+                      display: inline-block;">
+        <img src="https://172.17.20.27/database/api/images_gfsol/{{item_name}}/" onclick="displayFullSize(this)" style="padding-left: 10px; max-width: 150px; height: auto;
+                                    " />
+        <span class="btn btn-primary " style="position: absolute; bottom: -35px; left: 35px;">รูปเชื่อม</span>
+      </div>
+    </div>
+
+  </div>
+  <div class="w3-row" style="height: 50px;">
+
+  </div>
+  <div class="w3-container">
+    <div class="w3-row" style="height: 35px;">
+      <div class="w3-col s12 w3-black w3-center" style="height: 35px;">
+        <p class="large">รายละเอียดองค์ประกอบโลหะ</p>
+      </div>
+    </div>
+    <div class="w3-row">
+      <div class="w3-col s12 w3-center">
+        <table id="tablebomlist" class="w3-table-all" style="overflow: scroll">
+          <tr>
+            <th>สี</th>
+            <th>รายละเอียด</th>
+            <th>โลหะ</th>
+            <th>น้ำหนักชั่งจริง</th>
+            <th>น้ำหนักมาตรฐานโลหะ</th>
+            <th>น้ำหนักเทียน</th>
+            <th>น้ำหนักตะไบ</th>
+          </tr>
+          {% for item in prosub_datatable %}
+            
+          <tr>
+            <td style="font-family: anakotmai-l" pro_sub_id="{{ item.pro_sub_id }}" pro_code="{{item.pro_code}}" pro_sub="{{item.pro_sub}}" pro_metal_id ="{{item.pro_metal_id}}" bomlist="{{bomlist_json}}" colorlist = "{{colorlist}}" supplylist = "{{supply_list}}" prometalbomlist ="{{prometalbom_data}}"
+                onclick="displaybomlist(this)">
+              {{ item.color }}
+            </td>
+            <td style="font-family: anakotmai-l" pro_sub_id="{{ item.pro_sub_id }}" pro_code="{{item.pro_code}}" pro_sub="{{item.pro_sub}}" pro_metal_id ="{{item.pro_metal_id}}"  bomlist="{{bomlist_json}}" colorlist = "{{colorlist}}" supplylist = "{{supply_list}}" prometalbomlist ="{{prometalbom_data}}"
+                onclick="displaybomlist(this)">
+              {{ item.desc }}
+            </td>
+            <td style="font-family: anakotmai-l" pro_sub_id="{{ item.pro_sub_id }}" pro_code="{{item.pro_code}}" pro_sub="{{item.pro_sub}}" pro_metal_id ="{{item.pro_metal_id}}"  bomlist="{{bomlist_json}}" colorlist = "{{colorlist}}" supplylist = "{{supply_list}}" prometalbomlist ="{{prometalbom_data}}"
+               onclick="displaybomlist(this)">
+              {{ item.metal }}
+            </td>
+            {% for prometal in prometal_datatable %}
+            <!-- {{prometal_datatable}}--->
+            <td style="font-family: anakotmai-l" pro_sub_id="{{ item.pro_sub_id }}" bomlist="{{bomlist_json}}" colorlist = "{{colorlist}}" supplylist = "{{supply_list}}" prometalbomlist ="{{prometalbom_data}}"   pro_code="{{item.pro_code}}" pro_sub="{{item.pro_sub}}" onclick="displaybomlist(this)">{{ prometal.true_wt }}</td>
+            <td style="font-family: anakotmai-l" pro_sub_id="{{ item.pro_sub_id }}" bomlist="{{bomlist_json}}" colorlist = "{{colorlist}}" supplylist = "{{supply_list}}" prometalbomlist ="{{prometalbom_data}}"   pro_code="{{item.pro_code}}" pro_sub="{{item.pro_sub}}" onclick="displaybomlist(this)">{{ prometal.std_wt }}</td>
+            <td style="font-family: anakotmai-l" pro_sub_id="{{ item.pro_sub_id }}" bomlist="{{bomlist_json}}" colorlist = "{{colorlist}}" supplylist = "{{supply_list}}" prometalbomlist ="{{prometalbom_data}}"   pro_code="{{item.pro_code}}" pro_sub="{{item.pro_sub}}" onclick="displaybomlist(this)">{{ prometal.wax_wt }}</td>
+            <td style="font-family: anakotmai-l" pro_sub_id="{{ item.pro_sub_id }}" bomlist="{{bomlist_json}}" colorlist = "{{colorlist}}" supplylist = "{{supply_list}}" prometalbomlist ="{{prometalbom_data}}"   pro_code="{{item.pro_code}}" pro_sub="{{item.pro_sub}}" onclick="displaybomlist(this)">{{ prometal.fin_wt }}</td>
+
+            {% endfor %}
+          </tr>
+            
+          {% endfor %}
+        </table>
+      </div>
+
+
+
+
+
+
+
+      <div class="w3-col s12 w3-center" style="overflow: scroll; padding-top: 20px;">
+        <div id="gemnavbar" class="w3-bar w3-black" style="width: 100%; display: flex;
+    justify-content: space-between;">
+          <button id="gems-button" class="w3-bar-item  w3-button" onclick="openacs('gems')">
+            เพชร-พลอย
+          </button>
+          <button id="metal-button" class="w3-bar-item w3-button" onclick="openacs('metal')">
+            ส่วนประกอบโลหะมีค่า
+          </button>
+          <button id="etc-button" class="w3-bar-item w3-button" onclick="openacs('etc')">
+            ส่วนประกอบอื่นๆ
+          </button>
+          <button id="prosub-button" class="w3-bar-item w3-button" onclick="openacs('prosub')">
+            งานลงสี
+          </button>
+        </div>
+
+        <style>
+          #gemnavbar button:hover,
+          #gemnavbar button.active {
+            background-color: #00eded;
+            color:#000000;
+          }
+        </style>
+
+
+
+        <script>
+          function autoClickButton() {
+            var button = document.getElementById("gems-button");
+            if (button) {
+              button.click();
+              // Add active class to the clicked button
+            
+              button.classList.add("active");
+            }
+          }
+        </script>
+
+        <script>
+          var table = document.getElementById('tablebomlist');
+          var rows = table.getElementsByTagName('tr');
+
+          for (var i = 0; i < rows.length; i++) {
+            rows[i].addEventListener('click', function () {
+              // Remove active class from all other rows in the table
+              var activeRows = table.getElementsByClassName('active');
+              while (activeRows.length > 0) {
+                activeRows[0].classList.remove('active');
+              }
+
+              // Add active class to the clicked row
+              this.classList.add('active');
+            });
+          }
+
+        </script>
+
+
+
+        <div id="gems" class="w3-container acs">
+          <table id="matchingTable" class="w3-table-all " stock_code_data_json="{{stone_data_json}}"></table>
+
+        </div>
+
+        <style>
+          #tablebomlist tr:hover,
+          #tablebomlist tr.active {
+            background-color: rgb(103, 255, 220);
+          }
+
+          #matchingTable tr:hover {
+            background-color: rgb(103, 255, 220);
+          }
+        </style>
+
+
+
+        <style>
+          .checkmark {
+            color: green;
+          }
+
+          .accordion-content {
+            display: none;
+            background-color: #fffde4 !important;
+            /* Add your desired background color here */
+          }
+
+          .accordion-content.show {
+            display: table-row;
+            background-color: #fffde4 !important;
+            /* Add your desired background color here */
+          }
+        </style>
+
+
+        <script>
+
+          function displaybomlist(element) {
+            colorlist(element);
+            supplylist(element);
+            acslist(element);
+            displayImage_prosub(element);
+            var div = document.getElementById("matchingTable");
+            if (div) {
+              div.style.display = "";
+            }
+
+            var bomlist_ = element.getAttribute("bomlist");
+            //console.log(bomlist_)
+            var bomlist = JSON.parse(bomlist_);
+            var pro_sub_id = element.getAttribute("pro_sub_id");
+            //console.log("prosub_id"+ pro_sub_id)
+            //console.log(bomlist)
+            var matchingData = [];
+
+            for (var i = 0; i < bomlist.length; i++) {
+              if (bomlist[i].pro_sub_id === pro_sub_id) {
+                matchingData.push(bomlist[i]);
+              }
+            }
+
+            if (matchingData.length > 0) {
+              // Generate the table
+              var table = document.getElementById("matchingTable");
+
+              // Clear existing table content
+              table.innerHTML = "";
+
+              // Define the mapping of column keys to header labels
+              var headerLabels = {
+                seq: "ลำดับ",
+                stockcode: "รหัส",
+                stockdesc: "รายละเอียด",
+                qty: "ปริมาณ",
+                unit_qty: "หน่วย",
+                setting: "การฝัง",
+                wax_fg: "ฝังเทียน",
+                cus_com: "ลูกค้า"
+              };
+
+              // Create table header
+              var headerRow = table.insertRow(0);
+              var keys = Object.keys(matchingData[0]);
+              for (var j = 0; j < keys.length; j++) {
+                var columnKey = keys[j];
+                if (columnKey !== "pro_sub_id") { // Skip "pro_sub_id" column
+                  var headerCell = headerRow.insertCell();
+                  headerCell.innerHTML = headerLabels[columnKey] || columnKey;
+                }
+              }
+
+              // Create table rows
+              for (var k = 0; k < matchingData.length; k++) {
+                var rowData = matchingData[k];
+                var row = table.insertRow(k + 1);
+                row.setAttribute("data-stockcode", rowData.stockcode); // Set data-stockcode attribute
+
+                // Add click event listener to the row
+                row.addEventListener("click", function () {
+                  var nextRow = this.nextElementSibling;
+                  if (nextRow && nextRow.classList.contains("accordion-content")) {
+                    // Check if the accordion content is already displayed
+                    if (nextRow.classList.contains("show")) {
+                      nextRow.classList.remove("show");
+                    } else {
+                      // Hide any open accordion content
+                      var previousAccordionContent = document.querySelector(".accordion-content.show");
+                      if (previousAccordionContent) {
+                        previousAccordionContent.classList.remove("show");
+                      }
+
+                      // Toggle the display of the current accordion content
+                      nextRow.classList.add("show");
+                    }
+                  } else {
+                    // Hide any open accordion content
+                    var previousAccordionContent = document.querySelector(".accordion-content.show");
+                    if (previousAccordionContent) {
+                      previousAccordionContent.classList.remove("show");
+                    }
+
+                    // Create accordion content row
+                    var accordionContentRow = table.insertRow(this.rowIndex + 1);
+                    accordionContentRow.classList.add("accordion-content", "show");
+
+                    // Retrieve stockcode_data_json attribute
+                    var stockCodeDataJson = document.getElementById("matchingTable").getAttribute("stock_code_data_json");
+                    if (stockCodeDataJson) {
+                      var stockCodeData = JSON.parse(stockCodeDataJson);
+
+
+                      // Find matching entry in stock_code_data_json
+                      var matchingEntry = stockCodeData.find(function (entry) {
+                        return entry.stockcode === this.getAttribute("data-stockcode");
+                      }, this);
+
+                      if (matchingEntry) {
+                        var desc = matchingEntry.desc;
+                        // Use the desc value as desired
+                        var cell = accordionContentRow.insertCell();
+                        cell.colSpan = table.rows[0].cells.length; // Set colSpan to the number of columns in the header row
+                        cell.innerHTML = desc;
+                      }
+                    }
+                  }
+                });
+
+
+
+                for (var prop in rowData) {
+                  if (prop === "stockcode") {
+                    var cell = row.insertCell();
+                    var stockcode = rowData[prop];
+                    var patternedStockcode = patternStockcode(stockcode);
+                    cell.innerHTML = patternedStockcode;
+
+
+                  } else if (prop === "wax_fg") {
+                    var cell = row.insertCell();
+                    var waxValue = rowData[prop];
+                    var waxCellContent = waxValue === "Y" ? "<span class='checkmark'>&#10004;</span>" : "";
+                    cell.innerHTML = waxCellContent;
+
+                  } else if (prop !== "pro_sub_id") { // Skip "pro_sub_id" column
+                    var cell = row.insertCell();
+                    cell.innerHTML = rowData[prop];
+                  }
+
+                }
+
+
+              }
+
+              // Function to pattern the stockcode
+              function patternStockcode(stockcode) {
+                var patternedStockcode = stockcode.replace(/(\w{3})(\w{4})(\w{2})(\w{3})(\w{3})(\w{3})(\w{1})$/, "$1-$2-$3-$4-$5-$6-$7");
+                return patternedStockcode;
+              }
+
+              
+
+            } else {
+              // No matching data found, create an empty table with the same header
+              var table = document.getElementById("matchingTable");
+          
+              // Clear existing table content
+              table.innerHTML = "";
+
+              var headerLabels = {
+                seq: "ลำดับ",
+                stockcode: "รหัส",
+                stockdesc: "รายละเอียด",
+                qty: "ปริมาณ",
+                unit_qty: "หน่วย",
+                setting: "การฝัง",
+                wax_fg: "ฝังเทียน",
+                cus_com: "ลูกค้า"
+              };
+
+             // Create table header
+              var headerRow = table.insertRow(0);
+              var keys = Object.keys(bomlist[0]);
+              for (var j = 0; j < keys.length; j++) {
+                var columnKey = keys[j];
+                if (columnKey !== "pro_sub_id") { // Skip "pro_sub_id" column
+                  var headerCell = headerRow.insertCell();
+                  headerCell.innerHTML = headerLabels[columnKey] || columnKey;
+                }
+              }
+
+              console.log("No matching data found.");
+            }
+
+          }
+        </script>
+
+        <script>
+          function colorlist(element){
+            //console.log("test")
+             if (element != []) {
+
+            var div = document.getElementById("colorlist");
+            if (div) {
+              div.style.display = "";
+            }
+
+            var colorlist_ = element.getAttribute("colorlist");
+            //console.log(bomlist_)
+            var colorlist = JSON.parse(colorlist_);
+            var pro_sub_id = element.getAttribute("pro_sub_id");
+            //console.log("prosub_id"+ pro_sub_id)
+            //console.log(bomlist)
+            var matchingData = [];
+
+            for (var i = 0; i < colorlist.length; i++) {
+              if (colorlist[i].pro_sub_id === pro_sub_id) {
+                matchingData.push(colorlist[i]);
+              }
+            }
+
+            if (matchingData.length > 0) {
+              // Generate the table
+              var table = document.getElementById("colorlist");
+
+              // Clear existing table content
+              table.innerHTML = "";
+
+              // Define the mapping of column keys to header labels
+              var headerLabels = {
+                pn_no: "ลำดับ",
+                color_code: "รหัสสี",
+                color_desc: "รายละเอียด",
+              };
+
+              // Create table header
+              var headerRow = table.insertRow(0);
+              var keys = Object.keys(matchingData[0]);
+              for (var j = 0; j < keys.length; j++) {
+                var columnKey = keys[j];
+                if (columnKey !== "pro_sub_id") { // Skip "pro_sub_id" column
+                  var headerCell = headerRow.insertCell();
+                  headerCell.innerHTML = headerLabels[columnKey] || columnKey;
+                }
+              }
+
+              // Create table rows
+              for (var k = 0; k < matchingData.length; k++) {
+                var rowData = matchingData[k];
+                var row = table.insertRow(k + 1);
+                
+
+                for (var prop in rowData) {
+                  if (prop !== "pro_sub_id") { // Skip "pro_sub_id" column
+                    var cell = row.insertCell();
+                    cell.innerHTML = rowData[prop];
+                  }
+
+                }
+
+
+              }
+
+            } else {
+              //No matching data found, create an empty table with the same header
+              var table = document.getElementById("colorlist");
+              var colorlist = [{}]
+              // Clear existing table content
+              table.innerHTML = "";
+
+              var headerLabels = {
+                pn_no: "ลำดับ",
+                color_code: "รหัสสี",
+                color_desc: "รายละเอียด",
+              };
+
+              // Create table header
+              var headerRow = table.insertRow(0);
+              var keys = Object.keys(colorlist[0]);
+              for (var j = 0; j < keys.length; j++) {
+                var columnKey = keys[j];
+                if (columnKey !== "pro_sub_id") { // Skip "pro_sub_id" column
+                  var headerCell = headerRow.insertCell();
+                  headerCell.innerHTML = headerLabels[columnKey] || columnKey;
+                }
+              }
+
+              console.log("No matching data found.");
+            }
+           }
+         }
+        </script>
+
+        <script>
+          function supplylist(element) {
+            //console.log("test")
+            if (element != []) {
+
+              var div = document.getElementById("supply_list");
+              if (div) {
+                div.style.display = "";
+              }
+
+              var spplylist_ = element.getAttribute("supplylist");
+              //console.log(bomlist_)
+              var supplylist = JSON.parse(spplylist_);
+              var pro_sub_id = element.getAttribute("pro_sub_id");
+              //console.log("prosub_id"+ pro_sub_id)
+              //console.log(bomlist)
+              var matchingData = [];
+
+              for (var i = 0; i < supplylist.length; i++) {
+                if (supplylist[i].pro_sub_id === pro_sub_id) {
+                  matchingData.push(supplylist[i]);
+                }
+              }
+
+              if (matchingData.length > 0) {
+                // Generate the table
+                var table = document.getElementById("supply_list");
+
+                // Clear existing table content
+                table.innerHTML = "";
+
+                // Define the mapping of column keys to header labels
+                var headerLabels = {
+                  seq: "ลำดับ",
+                  stockcode: "รหัส",
+                  stockdesc: "รายละเอียด",
+                  qty: "ปริมาณ",
+                  unit_qty: "หน่วย",
+                  cus_com: "ลูกค้า"
+                };
+
+                // Create table header
+                var headerRow = table.insertRow(0);
+                var keys = Object.keys(matchingData[0]);
+                for (var j = 0; j < keys.length; j++) {
+                  var columnKey = keys[j];
+                  if (columnKey !== "pro_sub_id") { // Skip "pro_sub_id" column
+                    var headerCell = headerRow.insertCell();
+                    headerCell.innerHTML = headerLabels[columnKey] || columnKey;
+                  }
+                }
+
+                // Create table rows
+                for (var k = 0; k < matchingData.length; k++) {
+                  var rowData = matchingData[k];
+                  var row = table.insertRow(k + 1);
+
+
+                  for (var prop in rowData) {
+                    if (prop !== "pro_sub_id") { // Skip "pro_sub_id" column
+                      var cell = row.insertCell();
+                      cell.innerHTML = rowData[prop];
+                    }
+
+                  }
+
+
+                }
+
+              } else {
+                //No matching data found, create an empty table with the same header
+                var table = document.getElementById("supply_list");
+                var supplylist = [{}]
+                // Clear existing table content
+                table.innerHTML = "";
+
+                var headerLabels = {
+                  seq: "ลำดับ",
+                  stockcode: "รหัส",
+                  stockdesc: "รายละเอียด",
+                  qty: "ปริมาณ",
+                  unit_qty: "หน่วย",
+                  cus_com: "ลูกค้า"
+                };
+
+                // Create table header
+                var headerRow = table.insertRow(0);
+                var keys = Object.keys(supplylist[0]);
+                for (var j = 0; j < keys.length; j++) {
+                  var columnKey = keys[j];
+                  if (columnKey !== "pro_sub_id") { // Skip "pro_sub_id" column
+                    var headerCell = headerRow.insertCell();
+                    headerCell.innerHTML = headerLabels[columnKey] || columnKey;
+                  }
+                }
+
+                console.log("No matching data found.");
+              }
+            }
+          }
+        </script>
+
+        <script>
+          function acslist(element) {
+            //console.log("acslist")
+            if (element != []) {
+
+              var div = document.getElementById("acslist");
+              if (div) {
+                div.style.display = "";
+              }
+
+              var prometalbomlist_ = element.getAttribute("prometalbomlist");
+              //console.log(prometalbomlist_)
+              var prometalbomlist = JSON.parse(prometalbomlist_);
+              var pro_metal_id = element.getAttribute("pro_metal_id");
+              //console.log("prosub_id"+ pro_sub_id)
+              //console.log(prometalbomlist)
+              //console.log(pro_metal_id)
+              var matchingData = [];
+
+              for (var i = 0; i < prometalbomlist.length; i++) {
+                if (prometalbomlist[i].pro_metal_id === pro_metal_id) {
+                  matchingData.push(prometalbomlist[i]);
+                  //console.log(matchingData)
+                }
+              }
+
+              if (matchingData.length > 0) {
+                // Generate the table
+                var table = document.getElementById("acslist");
+
+                // Clear existing table content
+                table.innerHTML = "";
+
+                // Define the mapping of column keys to header labels
+                var headerLabels = {
+                  seq: "ลำดับ",
+                  stockcode: "รหัส",
+                  stockdesc: "รายละเอียด",
+                  qty: "ปริมาณ",
+                  unit_qty: "หน่วย",
+                  cus_com:"ลูกค้า"
+                };
+
+                // Create table header
+                var headerRow = table.insertRow(0);
+                var keys = Object.keys(matchingData[0]);
+                for (var j = 0; j < keys.length; j++) {
+                  var columnKey = keys[j];
+                  if (columnKey !== "pro_metal_id" && columnKey !== "stock_id") { // Skip "pro_metal_id" column
+                    var headerCell = headerRow.insertCell();
+                    headerCell.innerHTML = headerLabels[columnKey] || columnKey;
+                  }
+                }
+
+                // Create table rows
+                for (var k = 0; k < matchingData.length; k++) {
+                  var rowData = matchingData[k];
+                  var row = table.insertRow(k + 1);
+
+
+                  for (var prop in rowData) {
+                    if (prop !== "pro_metal_id" && prop !== "stock_id") { // Skip "pro_sub_id" column
+                      var cell = row.insertCell();
+                      cell.innerHTML = rowData[prop];
+                    }
+
+                  }
+                 
+
+
+                }
+
+              } else {
+                //No matching data found, create an empty table with the same header
+                var table = document.getElementById("acslist");
+                var prometalbomlist = [{}]
+                // Clear existing table content
+                table.innerHTML = "";
+
+                var headerLabels = {
+                  seq: "ลำดับ",
+                  stockcode: "รหัส",
+                  stockdesc: "รายละเอียด",
+                  qty: "ปริมาณ",
+                  unit_qty: "หน่วย",
+                  cus_com: "ลูกค้า"
+                };
+
+                // Create table header
+                var headerRow = table.insertRow(0);
+                var keys = Object.keys(prometalbomlist[0]);
+                for (var j = 0; j < keys.length; j++) {
+                  var columnKey = keys[j];
+                  if (columnKey !== "pro_metal_id") { // Skip "pro_sub_id" column
+                    var headerCell = headerRow.insertCell();
+                    headerCell.innerHTML = headerLabels[columnKey] || columnKey;
+                  }
+                }
+
+                console.log("No matching data found.");
+              }
+            }
+          }
+        </script>
+
+        <script>
+          var activeRow = null; // Variable to store the currently active row
+          function displayImage_prosub(element) {
+              var proCode = element.getAttribute("pro_code");
+              var proSub = element.getAttribute("pro_sub");
+              var apiUrl = `https://172.17.20.27/database/api/images_subpict/${proCode}/${proSub}`;
+             // Create a new row for the accordion content
+            var newRow = document.createElement("tr");
+
+            // Create a new cell to contain the image
+            var imageCell = document.createElement("td");
+            imageCell.colSpan = element.parentNode.childElementCount; // Set the colspan to span the entire row
+
+            // Create an image element
+            var image = document.createElement("img");
+            image.src = apiUrl;
+            image.style.maxWidth = "100%"; // Adjust the image size if needed
+            image.style.maxWidth = "400px"; // Set the maximum width to 400px
+            image.style.height = "auto"; // Let the height adjust automatically to maintain the aspect ratio
+            image.style.cursor = "pointer"; // Set cursor style to indicate it's clickable
+            // image.onload = function () {
+            //   // Once the image is loaded, set the styles and append it to the cell
+            //   image.style.maxWidth = "400px"; // Set the maximum width to 400px
+            //   image.style.height = "auto"; // Let the height adjust automatically to maintain the aspect ratio
+            //   image.style.cursor = "pointer"; // Set cursor style to indicate it's clickable
+
+            //   // Append the image to the cell
+            //   imageCell.appendChild(image);
+            // };
+
+            // Add event listener to handle full-screen toggle
+            image.addEventListener("click", function () {
+              if (image.classList.contains("fullscreen")) {
+                exitFullscreen();
+                image.classList.remove("fullscreen");
+              } else {
+                enterFullscreen(image);
+                image.classList.add("fullscreen");
+              }
+            });
+
+            // // Append the image to the cell
+             imageCell.appendChild(image);
+
+            // // Append the cell to the new row
+             newRow.appendChild(imageCell);
+
+
+
+
+            // Check if there is an active row
+            if (activeRow) {
+              activeRow.parentNode.removeChild(activeRow); // Remove the active row
+            }
+
+            // Insert the new row after the clicked row
+            element.parentNode.parentNode.insertBefore(newRow, element.parentNode.nextSibling);
+
+            activeRow = newRow; // Set the new row as the active row
+            }
+
+            // Function to enter full-screen mode
+              function enterFullscreen(element) {
+                if (element.requestFullscreen) {
+                  element.requestFullscreen();
+                } else if (element.mozRequestFullScreen) {
+                  element.mozRequestFullScreen();
+                } else if (element.webkitRequestFullscreen) {
+                  element.webkitRequestFullscreen();
+                } else if (element.msRequestFullscreen) {
+                  element.msRequestFullscreen();
+                }
+              }
+
+              // Function to exit full-screen mode
+              function exitFullscreen() {
+                if (document.exitFullscreen) {
+                  document.exitFullscreen();
+                } else if (document.mozCancelFullScreen) {
+                  document.mozCancelFullScreen();
+                } else if (document.webkitExitFullscreen) {
+                  document.webkitExitFullscreen();
+                } else if (document.msExitFullscreen) {
+                  document.msExitFullscreen();
+                }
+              }
+        </script>
+
+       
+
+        <script>
+          function autoClickFirstCellBomlist() {
+            var table = document.getElementById("tablebomlist");
+            if (table && table.rows.length >=0 ) {
+              var firstRow = table.querySelector("tr:not(:first-child)");
+              if (firstRow) {
+                var firstCell = firstRow.querySelector("td");
+                if (firstCell) {
+                  firstCell.click();
+                }
+              }
+            }
+          }
+
+        </script>
+
+
+
+        <div id="metal" class="w3-container acs" style="display: none">
+          <table id="acslist" class="w3-table-all " style="margin-left: auto; margin-right: auto;">
+          </table>
+
+        </div>
+
+        <div id="etc" class="w3-container acs" style="display: none">
+          <table id="supply_list" class="w3-table-all " style="margin-left: auto; margin-right: auto;">
+          </table>
+
+        </div>
+
+        <div id="prosub" class="w3-container acs" style="display: none;">
+              <table id="colorlist" class="w3-table-all " style="margin-left: auto; margin-right: auto;" >
+          </table>
+
+        </div>
+
+        <script>
+        
+          function openacs(acsName) {
+              var buttons = document.getElementsByClassName("w3-button");
+
+              // Remove active class from all buttons
+              for (var i = 0; i < buttons.length; i++) {
+                buttons[i].classList.remove("active");
+              }
+
+              // Add active class to the clicked button
+              var clickedButton = document.getElementById(acsName + "-button");
+              clickedButton.classList.add("active");
+
+              // Rest of your code...
+              var x = document.getElementsByClassName("acs");
+              for (i = 0; i < x.length; i++) {
+                x[i].style.display = "none";
+              }
+              document.getElementById(acsName).style.display = "block";
+            }
+        </script>
+
+    
+      </div>
+      <!-- close col --->
+    </div>
+    <!-- close row --->
+  </div>
+  <!-- close container --->
+  </div>
+  <!-- close page --->
+
+  <script>
+    // Function to show the selected page and hide the others
+    function showPage(pageName) {
+      var i;
+      var pages = document.getElementsByClassName("content");
+      for (i = 0; i < pages.length; i++) {
+        pages[i].style.display = "none";
+      }
+      document.getElementById(pageName).style.display = "block";
+    }
+  </script>
+  <!--=========================== END OF page2 ===========================-->
+
+  <!--=============================== page3 =============================-->
+
+  <div class="content" id="page3" style="display: none">
+    <style>
+      #routegroup tr:hover,
+      #routegroup tr.active {
+        background-color: rgb(103, 255, 220);
+      }
+
+      #routeProsublist tr:hover,
+      #routeProsublist tr.active {
+        background-color: rgb(103, 255, 220);
+      }
+
+      #semi_code_list tr:hover,
+      #semi_code_list tr.active {
+        background-color: rgb(103, 255, 220);
+      }
+    </style>
+
+    <div class="w3-row we-center">
+      <div class="w3-col s4">
+    
+        <p></p>
+        <h1 class="card-text"><span class="badge bg-primary " ">เบอร์โมเดล : {{item_name}}</span></h1>
+                            
+                              </div>
+                  <div class=" w3-col s8 ">
+                    <div class=" image-container " style=" position: relative; display: inline-block;">
+            <img src="https://172.17.20.27/database/api/images/{{item_name}}/" onclick="displayFullSize(this)"
+              style="max-width: 150px; height: auto;" />
+            <span class="btn btn-primary " style="position: absolute; bottom: -35px; left: 35px;">รูปโมเดล</span>
+      </div>
+    
+      <div class="image-container " style="position: relative;
+                      display: inline-block;">
+        <img src="https://172.17.20.27/database/api/images_gfsol/{{item_name}}/" onclick="displayFullSize(this)" style="padding-left: 10px; max-width: 150px; height: auto;
+                                    " />
+        <span class="btn btn-primary " style="position: absolute; bottom: -35px; left: 35px;">รูปเชื่อม</span>
+      </div>
+    </div>
+    
+    </div>
+
+    <div class="w3-row" style="height: 65px;"></div>
+    <div class="w3-row">
+      <div class="w3-col s2">
+        <table id="routegroup" class="w3-table-all" style="overflow: scroll;">
+            <tr>
+              <th>กลุ่ม</th>
+              {% for item in routegroup_list %}
+            <tr>
+            
+              <td  routegroup = "{{item.routegroup}}" routeProsub_list="{{routeProsub_list_json}}"  semi_code_list="{{semi_code_list_json}}" semi_route_id_list="{{semi_route_id_list_json}}"   finalroutelist="{{route_list_json}}"    onclick="displayrouteProsub(this)">
+                {{ item.routegroup }}
+              </td>
+            
+            </tr>
+            {%endfor%}
+            </tr>
+        </table>
+      </div>
+
+      <div class="w3-col s5">
+        <table id="routeProsublist" class="w3-table-all"   style="overflow: scroll;">
+        </table>
+      </div>
+      <div class="w3-col s5">
+        <table id="semi_code_list" class="w3-table-all" style="overflow: scroll;">
+        </table>
+      </div>
+    </div>
+
+    <div class="w3-row" style="height: 65px;"></div>
+
+    <div class="w3-row">
+      <div class="w3-col s12">
+        <table id="routetablelist" class="w3-table-all" style="overflow: scroll;">
+
+        </table>
+      </div>
+    </div>
+    
+    
+
+    <div class="w3-panel">
+      <div class="w3-row">
+        <div class="w3-col s4 w3-left">
+          <div class="w3-container w3-sand" style="height: 300px; overflow: scroll">
+            <div id="pro_spec2" class="w3-container">
+              <pre></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!--=============================== end page3 =============================-->
+
+
+<!--=============================== start page4 =============================-->
+<div class="content" id="page4" style="display: none">
+
+  <div class="w3-row we-center">
+    <div class="w3-col s4">
+  
+      <p></p>
+      <h1 class="card-text"><span class="badge bg-primary " ">เบอร์โมเดล : {{item_name}}</span></h1>
+                        
+                          </div>
+              <div class=" w3-col s8  ">
+                <div class=" image-container " style=" position: relative; display: inline-block;">
+          <img src="https://172.17.20.27/database/api/images/{{item_name}}/" onclick="displayFullSize(this)"
+            style="max-width: 150px; height: auto;" />
+          <span class="btn btn-primary " style="position: absolute; bottom: -35px; left: 35px;">รูปโมเดล</span>
+    </div>
+  
+    <div class="image-container " style="position: relative;
+                  display: inline-block;">
+      <img src="https://172.17.20.27/database/api/images_gfsol/{{item_name}}/" onclick="displayFullSize(this)" style="padding-left: 10px; max-width: 150px; height: auto;
+                                " />
+      <span class="btn btn-primary " style="position: absolute; bottom: -35px; left: 35px;">รูปเชื่อม</span>
+    </div>
+  </div>
+  
+  </div>
+  
+  <div class="w3-row" style="height: 50px;">
+  </div>
+  <div class="w3-row" style="height: 35px;">
+  <div class="w3-col s12 w3-black w3-center" style="height: 35px;">
+    <p class="large">รายละเอียดโลหะผสม</p>
+  </div>
+</div>
+  <div class="w3-row">
+    <div class="w3-col s12">
+      <div class="w3-panel w3-white w3-center" style="height:600px">
+       
+        {%for item in gfmaster_datatable%}
+          {%if item.no_cast is not None%}
+        <input class="w3-check" type="checkbox" checked="checked" disabled>
+          {%else%}
+        <input class="w3-check" type="checkbox" disabled>
+          {%endif%}
+        <label>No Cast (ไม่สั่งหล่อ)</label>
+        <br>
+        <br>
+        <label class="w3-text-black" style="padding-left: 62px;"><b>น้ำหนักพิมพ์</b></label>
+   
+      <label class="w3-text-black" style="padding-left: 100px;">น้ำหนักลูกค้า</label>
+      <label class="w3-text-black" style="padding-left: 25px;">น้ำหนัก โลหะเงิน ที่ใช้หล่อ</label>
+       <br>
+    
+      
+      <label class="w3-text-yellow">Yellow Gold</label>
+      <input class="w3-input w3-border w3-round" type="text" style="width: 100px; display: inline-block;" value = "{{item.yg_wt}}" readonly>
+      <input class="w3-input w3-border w3-round" type="text" style="width: 100px;  display:inline-block;" value = "{{item.cus_yg_wt}}" readonly>
+      <input class="w3-input w3-border w3-round" type="text" style="width: 100px;  display:inline-block;" value = "{{item.yg_castwt}}" readonly>
+      <br>
+      <br>
+      <label class="w3-text-black" style="padding-left: 5px;">White Gold</label>
+            <input class="w3-input w3-border w3-round" type="text" style="width: 100px; display: inline-block;" value = "{{item.wg_wt}}" readonly>
+            <input class="w3-input w3-border w3-round" type="text" style="width: 100px;  display:inline-block;" value = "{{item.cus_wg_wt}}" readonly>
+            <input class="w3-input w3-border w3-round" type="text" style="width: 100px;  display:inline-block;" value = "{{item.wg_castwt}}" readonly>
+            <br>
+            <br>
+            <div style="padding-right:83px;">
+      <label class="w3-text-blue" >Platinum</label>
+            <input class="w3-input w3-border w3-round" type="text" style="width: 100px; display: inline-block;" value = "{{item.pt_wt}}" readonly>
+            <input class="w3-input w3-border w3-round" type="text" style="width: 100px;  display:inline-block;" value = "{{item.cus_pt_wt}}" readonly>
+            <br>
+            <br>
+            </div>
+            <div style="padding-left:42px ;">
+      <label class="w3-text-grey">Silver</label>
+            <input class="w3-input w3-border w3-round" type="text" style="width: 100px; display: inline-block;" value = "{{item.si_wt}}" readonly>
+            <input class="w3-input w3-border w3-round" type="text" style="width: 100px;  display:inline-block;" value = "{{item.cus_si_wt}}" readonly>
+            <input class="w3-input w3-border w3-round" type="text" style="width: 100px;  display:inline-block;" value = "{{item.cast_925wt}}" readonly>
+            <br>
+            <br>
+            </div>
+
+            <div style="padding-right: 124px;">
+            <input class="w3-input w3-border w3-round w3-blue" type="text" style="width: 100px;  display:inline-block;" value = "{{item.mold_wt}}" readonly>
+            <br>
+            <br>
+            </div>
+            <div  style="padding-right: 224px;">
+      <label class="w3-text-black">น้ำหนักพิมพ์จริง</label>
+      <input class="w3-input w3-border w3-round" type="text" style="width: 100px; display: inline-block;" value = "{{item.true_wt}}" readonly>
+      <br>
+      <br>
+      </div>
+
+      <div style="padding-right: 107px;">
+      <label class="w3-text-black">น้ำหนักสร้อยเงิน</label>
+      <input class="w3-input w3-border w3-round" type="text" style="width: 100px; display: inline-block;" value = "{{item.sil_chain}}" readonly>
+      <label class="w3-text-black" style="display:inline-block">*เฉพาะลูกค้าโทมัส</label>
+      <br>
+      <br>
+      </div>
+      <div style="padding-right: 410px;">
+      <label class="w3-text-black">โลหะอื่นๆที่เชื่อม ที่ห้องเชื่อม เช่นสปริง,บานพับ</label>
+      <input class="w3-input w3-border w3-round" type="text" style="width: 100px; display: inline-block;"  value = "{{item.ag_wt}}" readonly>
+     </div>
+      {%endfor%}
+
+      </div>
+
+    </div>
+  </div>
+<!-- <div class="w3-row" style="height: 35px;">
+  <div class="w3-col s12 w3-black w3-center" style="height: 35px;">
+    <p class="large">รายละเอียดโลหะผสม</p>
+  </div>
+</div> -->
+  <div class="w3-row">
+    <div class="w3-col s2 w3-center">
+      <table id="metal_topic" class="w3-table-all" style="overflow: scroll;">
+        <tr>
+          <th>โลหะ</th>
+          {% for item in unique_prometal_list %}
+          <tr>
+       
+            <td style="font-family: anakotmai-l" metal_name = "{{item.mt_metal}}" prometal_datatable_json="{{prometal_datatable_json}}" onclick="displaymetallist(this)">
+              {{ item.mt_metal }}
+            </td>
+          
+          </tr>
+            {%endfor%}
+        </tr>
+      </table>
+    </div>
+    <div class="w3-col s1">
+
+    </div>
+    <div class="w3-col s9 w3-right">
+      <table id="metallist" class="w3-table-all" style="overflow: scroll; text-align: center; vertical-align: middle;">
+      </table>
+    </div>
+  </div>
+  <div class="w3-row" style="height: 50px;">
+  </div>
+ 
+</div> <!--* close page4--->
+
+<style>
+  #metal_topic tr:hover,
+  #metal_topic tr.active {
+    background-color: rgb(103, 255, 220);
+  }
+
+  #metallist tr:hover {
+    background-color: rgb(103, 255, 220);
+  }
+</style>
+
+<script>
+  
+    function displaymetallist(element) {
+      var div = document.getElementById("metallist");
+      if (div) {
+        div.style.display = "";
+      }
+
+      var metallist_ = element.getAttribute("prometal_datatable_json");
+
+      var metallist = JSON.parse(metallist_);
+      var metalname = element.getAttribute("metal_name");
+
+      var matchingData = [];
+
+      for (var i = 0; i < metallist.length; i++) {
+        if (metallist[i].mt_metal === metalname) {
+          matchingData.push(metallist[i]);
+        }
+      }
+
+      if (matchingData.length > 0) {
+        // Generate the table
+        var table = document.getElementById("metallist");
+
+        // Clear existing table content
+        table.innerHTML = "";
+
+        // Define the mapping of column keys to header labels
+        var headerLabels = {
+          sub_metal: "โลหะ",
+          mt_mast: "เป็นโลหะหลัก",
+          mt_cast: "งานหล่อ/เบิก",
+          stn_set: "ฝังพลอย",
+          true_wt: "น้ำหนักชั่งจริง",
+          std_wt: "น้ำหนักมาตรฐานโลหะ",
+          cus_wt: "น้ำหนักลูกค้า",
+          wax_wt: "น้ำหนักเทียน",
+          cast_wt:"น้ำหนักหล่อ",
+          fin_wt:"น้ำหนักตะไบ"
+        };
+
+        // Create table header
+        var headerRow = table.insertRow(0);
+        var keys = Object.keys(matchingData[0]);
+        for (var j = 0; j < keys.length; j++) {
+          var columnKey = keys[j];
+          if (columnKey !== "mt_metal") { // Skip "mt_metal" column
+            var headerCell = headerRow.insertCell();
+            headerCell.innerHTML = headerLabels[columnKey] || columnKey;
+          }
+        }
+
+        // Create table rows
+        for (var k = 0; k < matchingData.length; k++) {
+          var rowData = matchingData[k];
+          var row = table.insertRow(k + 1);
+  
+
+
+          for (var prop in rowData) {
+             if (prop !== "mt_metal") { // Skip "mt_metal" column 
+              var cell = row.insertCell();
+              cell.innerHTML = rowData[prop];
+            }  if (prop === "stn_set") {
+               var stn_setValue = rowData[prop];
+               var stn_setValueContent = stn_setValue === "1" ? "<span class='checkmark'>&#10004;</span>" : "";
+               cell.innerHTML = stn_setValueContent;
+
+             } if (prop === "mt_mast") {
+              var mt_mastValue = rowData[prop];
+              var mt_mastValueContent = mt_mastValue === "1" ? "<a class='w3-button w3-green'>YES</a>" : "<a class='w3-button w3-red'>NO</a>";
+              cell.innerHTML = mt_mastValueContent;
+
+            }  
+
+            if (prop === "mt_cast") {
+              var mt_castValue = rowData[prop];
+              switch (mt_castValue) {
+                case "1":
+                  mt_castValueContent = "<a class='w3-button w3-yellow'>หล่อ</a>";
+                  break;
+                case "2":
+                  mt_castValueContent = "<a class='w3-button w3-blue'>เบิก</a>";
+                  break;
+                default:
+                  mt_castValueContent = "<a class='w3-button w3-black'>None</a>";
+                  break;
+              }
+              cell.innerHTML = mt_castValueContent;
+
+            } 
+            
+
+          }
+
+
+        }
+
+      
+
+      } else {
+        // No matching data found, create an empty table with the same header
+        var table = document.getElementById("metallist");
+        var metallist = [{}]
+        // Clear existing table content
+        table.innerHTML = "";
+
+        var headerLabels = {
+          sub_metal: "โลหะ",
+          mt_mast: "เป็นโลหะหลัก",
+          mt_cast: "งานหล่อ/เบิก",
+          stn_set: "ฝังพลอย",
+          true_wt: "น้ำหนักชั่งจริง",
+          std_wt: "น้ำหนักมาตรฐานโลหะ",
+          cus_wt: "น้ำหนักลูกค้า",
+          wax_wt: "น้ำหนักเทียน",
+          cast_wt: "น้ำหนักหล่อ",
+          fin_wt: "น้ำหนักตะไบ"
+        };
+
+        // Create table header
+        var headerRow = table.insertRow(0);
+        var keys = Object.keys(metallist[0]);
+        for (var j = 0; j < keys.length; j++) {
+          var columnKey = keys[j];
+          if (columnKey !== "mt_metal") { // Skip "mt_metal" column
+            var headerCell = headerRow.insertCell();
+            headerCell.innerHTML = headerLabels[columnKey] || columnKey;
+          }
+        }
+
+        console.log("No matching data found.");
+      }
+
+    }
+</script>
+
+<script>
+
+  function displayrouteProsub(element) {
+    var div = document.getElementById("routegroup");
+    if (div) {
+      div.style.display = "";
+    }
+
+    var routeProsublist = element.getAttribute("routeProsub_list");
+    var routeProsublist = JSON.parse(routeProsublist);
+    var routegroup = element.getAttribute("routegroup");
+
+    var semi_code_list = element.getAttribute("semi_code_list");
+    var semi_code_list_json = JSON.parse(semi_code_list);
+
+    var semi_route_id = element.getAttribute("semi_route_id_list");
+    var finalroutelist = element.getAttribute("finalroutelist")
+    //var semi_route_id = JSON.parse(semi_route_id);
+
+    var matchingData = [];
+
+    for (var i = 0; i < routeProsublist.length; i++) {
+      if (routeProsublist[i].routegroup === routegroup) {
+        matchingData.push(routeProsublist[i]);
+      }
+    }
+
+    if (matchingData.length > 0) {
+      // Generate the table
+      var table = document.getElementById("routeProsublist");
+
+      // Clear existing table content
+      table.innerHTML = "";
+
+      // Define the mapping of column keys to header labels
+      var headerLabels = {
+        pro_code:"โมเดล",
+        routegroup:"กลุ่ม",
+        pro_sub: "สี",
+        description: "รายละเอียด",
+        mt_metal: "โลหะ",
+      };
+
+      // Create table header
+      var headerRow = table.insertRow(0);
+      var keys = Object.keys(matchingData[0]);
+      for (var j = 0; j < keys.length; j++) {
+        var columnKey = keys[j];
+        if (columnKey !== "test") { // Skip "test" column
+          var headerCell = headerRow.insertCell();
+          headerCell.innerHTML = headerLabels[columnKey] || columnKey;
+        }
+      }
+
+      // Create table rows
+      for (var k = 0; k < matchingData.length; k++) {
+        var rowData = matchingData[k];
+        var row = table.insertRow(k + 1);
+
+         row.onclick = function () {
+          displaySemirouteId(this);
+        };
+
+        for (var prop in rowData) {
+          if (prop !== "test") { // Skip "mt_metal" column 
+            var cell = row.insertCell();
+            cell.innerHTML = rowData[prop];
+          } 
+
+          if (prop === "test") {
+            var mt_castValue = rowData[prop];
+            switch (mt_castValue) {
+              case "1":
+                mt_castValueContent = "<a class='w3-button w3-yellow'>หล่อ</a>";
+                break;
+              case "2":
+                mt_castValueContent = "<a class='w3-button w3-blue'>เบิก</a>";
+                break;
+              default:
+                mt_castValueContent = "<a class='w3-button w3-black'>None</a>";
+                break;
+            }
+            cell.innerHTML = mt_castValueContent;
+
+          }
+          
+          if (prop === "routegroup") {
+            var routegroup = rowData[prop];
+            for (var i = 0; i < semi_code_list_json.length; i++) {
+              if (semi_code_list_json[i].routegroup === routegroup) {
+                semi_code = semi_code_list_json[i].semi_code;
+                row.setAttribute("semi_code", semi_code);
+                row.setAttribute("semi_route_id", semi_route_id);
+                row.setAttribute("semi_code_list", semi_code_list);
+                row.setAttribute("finalroutelist", finalroutelist);
+              }
+            }           
+          }     
+        }
+      }
+       autoclickFirstproroute();
+
+    } else {
+      // No matching data found, create an empty table with the same header
+      var table = document.getElementById("routeProsublist");
+      var routeProsublist = [{}]
+      // Clear existing table content
+      table.innerHTML = "";
+
+      var headerLabels = {
+        pro_code: "โมเดล",
+        routegroup: "กลุ่ม",
+        pro_sub: "สี",
+        description: "รายละเอียด",
+        mt_metal: "โลหะ",
+      };
+
+      // Create table header
+      var headerRow = table.insertRow(0);
+      var keys = Object.keys(routeProsublist[0]);
+      for (var j = 0; j < keys.length; j++) {
+        var columnKey = keys[j];
+        if (columnKey !== "test") { // Skip "mt_metal" column
+          var headerCell = headerRow.insertCell();
+          headerCell.innerHTML = headerLabels[columnKey] || columnKey;
+        }
+      }
+
+      console.log("No matching data found.");
+    }
+
+  }
+</script>
+
+<script>
+  function displaySemirouteId(element){
+    var semi_code = element.getAttribute("semi_code");
+    var semi_code_list = element.getAttribute("semi_code_list");
+    var semi_code_list_json = JSON.parse(semi_code_list);
+
+    var semi_route_id = element.getAttribute("semi_route_id");
+    var semi_route_id_json = JSON.parse(semi_route_id);
+
+    var finalroutelist = element.getAttribute("finalroutelist");
+
+
+
+    var matchingData = [];
+
+    for (var i = 0; i < semi_code_list_json.length; i++) {
+      if (semi_code_list_json[i].semi_code === semi_code) {
+        matchingData.push(semi_code_list_json[i]);
+      }
+    }
+
+    if (matchingData.length > 0) {
+      // Generate the table
+      var table = document.getElementById("semi_code_list");
+
+      // Clear existing table content
+      table.innerHTML = "";
+
+      // Define the mapping of column keys to header labels
+      var headerLabels = {
+        pro_code: "โมเดล",
+        routegroup: "กลุ่ม",
+        semi_code: "SEMI",
+        semi_char: "JOB",
+        cast_metal: "หล่อ",
+        comp:"COMP"
+      };
+
+      // Create table header
+      var headerRow = table.insertRow(0);
+      var keys = Object.keys(matchingData[0]);
+      for (var j = 0; j < keys.length; j++) {
+        var columnKey = keys[j];
+        if (columnKey !== "pro_code" && "routegroup") { // Skip "pro_code" column
+          var headerCell = headerRow.insertCell();
+          headerCell.innerHTML = headerLabels[columnKey] || columnKey;
+        }
+      }
+
+      // Create table rows
+      for (var k = 0; k < matchingData.length; k++) {
+        var rowData = matchingData[k];
+        var row = table.insertRow(k + 1);
+
+        row.onclick = function () {
+          displayroutelist(this);
+        };
+
+        for (var prop in rowData) {
+          if (prop !== "pro_code" && "routegroup") { // Skip "mt_metal" column 
+            var cell = row.insertCell();
+            cell.innerHTML = rowData[prop];
+          }
+
+
+          if (prop === "semi_code") {
+            var semicode = rowData[prop];
+            for (var i = 0; i < semi_route_id_json.length; i++) {
+              if (semi_route_id_json[i].semi_code === semicode) {
+                semi_route_id = semi_route_id_json[i].semi_route_id;
+                row.setAttribute("semi_route_id", semi_route_id);
+                row.setAttribute("finalroutelist", finalroutelist);
+      
+              }
+            }
+          }
+        }
+      }
+      autoclickFirstsemicode();
+
+    } else {
+      // No matching data found, create an empty table with the same header
+      var table = document.getElementById("semi_code_list");
+      var semi_code_list = [{}]
+      // Clear existing table content
+      table.innerHTML = "";
+
+      var headerLabels = {
+        pro_code: "โมเดล",
+        routegroup: "กลุ่ม",
+        semi_code: "SEMI",
+        semi_char: "JOB",
+        cast_metal: "หล่อ",
+        comp: "COMP"
+      };
+
+      // Create table header
+      var headerRow = table.insertRow(0);
+      var keys = Object.keys(semi_code_list[0]);
+      for (var j = 0; j < keys.length; j++) {
+        var columnKey = keys[j];
+        if (columnKey !== "pro_code" && "routegroup") { // Skip "pro_code" column
+          var headerCell = headerRow.insertCell();
+          headerCell.innerHTML = headerLabels[columnKey] || columnKey;
+        }
+      }
+
+      console.log("No matching data found.");
+    }
+
+  }
+</script>
+
+
+<script>
+  function displayroutelist(element){
+
+    var finalroutelist = element.getAttribute("finalroutelist");
+    var finalroutelist_json = JSON.parse(finalroutelist);
+    
+    var semi_route_id = element.getAttribute("semi_route_id");
+
+    var table = document.getElementById("routetablelist");
+
+    var matchingData = [];
+
+    for (var i = 0; i < finalroutelist_json.length; i++) {
+      if (finalroutelist_json[i].semi_route_id === semi_route_id) {
+        matchingData.push(finalroutelist_json[i]);
+      }
+    }
+
+    if (matchingData.length > 0) {
+      // Generate the table
+      var table = document.getElementById("routetablelist");
+
+      // Clear existing table content
+      table.innerHTML = "";
+
+      // Define the mapping of column keys to header labels
+      var headerLabels = {
+        semi_route_id: "semi_route_id",
+        route_seq: "ลำดับ",
+        rt_code: "รหัสงาน",
+        rt_desc: "งาน",
+        loop: "รอบ",
+        rt_unit: "หน่วย",
+        qty: "จำนวน",
+        stdtime:"เวลามาตรฐาน",
+        realtime:"เวลาจริง"
+      };
+
+      // Create table header
+      var headerRow = table.insertRow(0);
+      var keys = Object.keys(matchingData[0]);
+      for (var j = 0; j < keys.length; j++) {
+        var columnKey = keys[j];
+        if (columnKey !== "semi_route_id" ) { // Skip "semi_route_id" column
+          var headerCell = headerRow.insertCell();
+          headerCell.innerHTML = headerLabels[columnKey] || columnKey;
+        }
+      }
+
+      // Create table rows
+      for (var k = 0; k < matchingData.length; k++) {
+        var rowData = matchingData[k];
+        var row = table.insertRow(k + 1);
+
+        row.onclick = function () {
+          test34(this);
+        };
+
+        for (var prop in rowData) {
+          if (prop !== "semi_route_id") { // Skip "semi_route_id" column 
+            var cell = row.insertCell();
+            cell.innerHTML = rowData[prop];
+          }
+
+
+ 
+        }
+      }
+
+    } else {
+      // No matching data found, create an empty table with the same header
+      var table = document.getElementById("finalroutelist");
+      var finalroutelist = [{}]
+      // Clear existing table content
+      table.innerHTML = "";
+
+      var headerLabels = {
+              semi_route_id: "semi_route_id",
+        route_seq: "ลำดับ",
+        rt_code: "รหัสงาน",
+        rt_desc: "งาน",
+        loop: "รอบ",
+        rt_unit:"หน่วย",
+        qty: "จำนวน",
+        stdtime: "เวลามาตรฐาน",
+        realtime: "เวลาจริง"
+      };
+
+      // Create table header
+      var headerRow = table.insertRow(0);
+      var keys = Object.keys(finalroutelist[0]);
+      for (var j = 0; j < keys.length; j++) {
+        var columnKey = keys[j];
+        if (columnKey !== "semi_route_id") { // Skip "semi_route_id" column
+          var headerCell = headerRow.insertCell();
+          headerCell.innerHTML = headerLabels[columnKey] || columnKey;
+        }
+      }
+
+      console.log("No matching data found.");
+    }
+  }
+</script>
+
+<script>
+  function autoClickFirstROute(){
+    var table = document.getElementById("routegroup");
+    var firstTd = table.querySelector("tr > td:first-child");
+     if (firstTd) {
+      firstTd.click();
+      
+    }
+  }
+    window.addEventListener("load", autoClickFirstROute);
+
+    function autoclickFirstproroute(){
+       var table_proroute = document.getElementById("routeProsublist");
+       var rows = table_proroute.querySelectorAll("tr");
+
+       rows.forEach(row => {
+        row.addEventListener("click", function () {
+          var currentActive = table_proroute.querySelector(".active");
+          if (currentActive) {
+            currentActive.classList.remove("active"); // Remove 'active' class from the previously active row
+          }
+          row.classList.add("active"); // Add 'active' class to the clicked row
+        });
+      });
+
+      var firstRow = table_proroute.querySelector("tr:nth-child(2)");
+      if (firstRow) {
+        firstRow.click();
+        
+      }
+    }
+    window.addEventListener("load", autoclickFirstproroute);
+
+    function autoclickFirstsemicode() {
+        var table_semi = document.getElementById("semi_code_list");
+        var rows = table_semi.querySelectorAll("tr");
+
+         rows.forEach(row => {
+        row.addEventListener("click", function () {
+          var currentActive = table_semi.querySelector(".active");
+          if (currentActive) {
+            currentActive.classList.remove("active"); // Remove 'active' class from the previously active row
+          }
+          row.classList.add("active"); // Add 'active' class to the clicked row
+        });
+      });
+
+
+        var firstRow = table_semi.querySelector("tr:nth-child(2)");
+        if (firstRow) {
+          firstRow.click();           
+        }
+      }
+      window.addEventListener("load", autoclickFirstsemicode);
+</script>
+
+<script>
+  function autoClickFirstmetalname() {
+       var table = document.getElementById("metal_topic");
+    var firstTd = table.querySelector("tr > td:first-child");
+
+    if (firstTd) {
+      firstTd.click();
+    }
+  
+    }
+    // Call the function to auto click the first td when the page is loaded
+      window.addEventListener("load", autoClickFirstmetalname);
+</script>
+
+<script>
+  var metalname_table = document.getElementById('metal_topic');
+    var metal_rows = metalname_table.getElementsByTagName('tr');
+
+    for (var i = 0; i < metal_rows.length; i++) {
+      metal_rows[i].addEventListener('click', function () {
+        // Remove active class from all other rows in the table
+        var activeRows = metalname_table.getElementsByClassName('active');
+        while (activeRows.length > 0) {
+          activeRows[0].classList.remove('active');
+        }
+
+        // Add active class to the clicked row
+        this.classList.add('active');
+      });
+    }
+</script>
+
+<script>
+  var routetable = document.getElementById('routegroup');
+  var routerow = routetable.getElementsByTagName('tr');
+
+  for (var i = 0; i < routerow.length; i++) {
+    routerow[i].addEventListener('click', function () {
+      // Remove active class from all other rows in the table
+      var activeRows = routetable.getElementsByClassName('active');
+      while (activeRows.length > 0) {
+        activeRows[0].classList.remove('active');
+      }
+
+      // Add active class to the clicked row
+      this.classList.add('active');
+    });
+  }
+
+  var proroutetable = document.getElementById('routeProsublist');
+    var prorouterow = proroutetable.getElementsByTagName('tr');
+
+    for (var i = 0; i < prorouterow.length; i++) {
+      prorouterow[i].addEventListener('click', function () {
+        // Remove active class from all other rows in the table
+        var activeRows = proroutetable.getElementsByClassName('active');
+        while (activeRows.length > 0) {
+          activeRows[0].classList.remove('active');
+        }
+
+        // Add active class to the clicked row
+        this.classList.add('active');
+      });
+    }
+</script>
+
+
+  <script src="{% static 'index.js' %}"></script>
+
+
+
+
+</body>
+
+</html>

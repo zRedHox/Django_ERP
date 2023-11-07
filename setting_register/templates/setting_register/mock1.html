@@ -1,0 +1,93 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{% static 'setting_register/css/basebst.css' %}" />
+    <title>การฝัง</title>
+</head>
+<body>
+    <div class="row" style="height: 50px;">
+        <div class="col">
+            <nav class="navbar navbar-light bg-white justify-content-between">
+                <a href="{% url 'mock1' %}" class="navbar-brand"> <img src="{% static 'img/command-line.png' %}" alt="" style="width: 20px; height: 20px;"> GoldFine</a>
+                <form class="form-inline">
+                    <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                </form>
+            </nav>
+        </div>
+    </div>
+    <div class="row" style="height: 20px;">
+
+    </div>
+    <div class="row" style="height: 50px;">
+        <div class="container" >
+            <a href="{% url 'setting_create' %}" class="btn btn-success">Create Setting</a>
+        </div>
+    </div>
+   <div class="row">
+    <div class="col"></div>
+    <div class="col-12">
+    <div class="container" style="width: 1070px; height: 700px; overflow: scroll;">
+        <ul class="list-group">
+            {% for setting in settings %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                    <h5 class="mb-1">{{ setting.setting }}</h5>
+                    <small class="text-muted">{{ setting.description }}</small>
+                </div>
+                <div>
+                    <span class="badge bg-dark text-white" style="margin-right: 5px;">{{ setting.lastuser }}</span>
+                    <a href="{% url 'setting_detail' setting.setting %}" class="btn btn-info">View</a>
+                    <a href="{% url 'setting_edit' setting.setting %}" class="btn btn-warning">Edit</a>
+                    <a href="{% url 'setting_delete' setting.setting %}" class="btn btn-danger data-toggle="modal"
+          data-target="#deleteModal{{ setting.setting }}">Delete</a>
+                </div>
+                <!-- Modal -->
+                <div class="modal fade" id="deleteModal{{ setting.setting }}" tabindex="-1" role="dialog"
+                    aria-labelledby="deleteModalLabel{{ setting.setting }}" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="deleteModalLabel{{ setting.setting }}">Confirm Deletion</h5>
+                                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close">
+                
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                Are you sure you want to delete setting {{ setting.setting }}?
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+                                <form action="{% url 'setting_delete' setting.setting %}" method="POST">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger">Yes</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--! end Modal --->
+            </li>
+            {% endfor %}
+        </ul>
+
+        </div>
+        <div class="container" style="height:50px">
+
+        </div>
+    </div>
+    </div>
+
+    <script>
+        window.addEventListener('load', function () {
+                setTimeout(function () {
+                    window.scrollTo(0, 1);
+                }, 0);
+            });
+    </script>
+</body>
+</html>

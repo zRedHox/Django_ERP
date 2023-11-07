@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+
+<button onclick="scanBarcode()">Scan Barcode</button>
+
+
+<script>
+    function scanBarcode() {
+        console.log('working')
+        // Use the MediaDevices API to get access to the camera
+        navigator.mediaDevices
+            .getUserMedia({ video: true })
+            .then(function (stream) {
+                // Create a video element to display the camera feed
+                var video = document.createElement("video");
+                video.setAttribute("autoplay", "");
+                video.setAttribute("playsinline", "");
+                video.srcObject = stream;
+
+                // Create a canvas element to capture still frames from the video feed
+                var canvas = document.createElement("canvas");
+                var ctx = canvas.getContext("2d");
+
+                // Add the video and canvas elements to the page
+                document.body.appendChild(video);
+                document.body.appendChild(canvas);
+
+                // Create a barcode detector object and attach it to the video feed
+                var barcodeDetector = new BarcodeDetector();
+                barcodeDetector
+                    .detect(video)
+                    .then(function (barcodes) {
+                        // Stop capturing frames and clean up the video and canvas elements
+                        stopCapture();
+
+                        // If a barcode is found, use the product ID to perform a search
+                        if (barcodes.length > 0) {
+                            var product_id = barcodes[0].rawValue;
+                            document.getElementsByName("item_name")[0].value = product_id;
+                            document.forms[0].submit();
+                        } else {
+                            alert("No barcode found");
+                        }
+                    })
+                    .catch(function (error) {
+                        alert("Barcode detection error: " + error.message);
+                        stopCapture();
+                    });
+
+                // Capture a frame from the video feed and draw it on the canvas
+                function captureFrame() {
+                    ctx.drawImage(
+                        video,
+                        0,
+                        0,
+                        canvas.width,
+                        canvas.height
+                    );
+                }
+
+                // Call the captureFrame() function repeatedly to capture frames at a set interval
+                var captureInterval = setInterval(captureFrame, 1000);
+
+                // Stop capturing frames and clean up the video and canvas elements
+                function stopCapture() {
+                    clearInterval(captureInterval);
+                    video.pause();
+                    video.srcObject = null;
+                    canvas.remove();
+                    video.remove();
+                }
+
+                // Add a button to stop capturing frames
+                var stopButton = document.createElement("button");
+                stopButton.innerText = "Stop";
+                stopButton.onclick = stopCapture;
+                document.body.appendChild(stopButton);
+            })
+            .catch(function (error) {
+                alert("Camera access denied: " + error.message);
+            });
+    }
+</script>
+
+
+    
+</body>
+</html>

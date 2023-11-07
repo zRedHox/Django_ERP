@@ -1,0 +1,39 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="{% static 'js/htmlbarcode.min.js' %}"></script>
+    <title>Document</title>
+</head>
+<body>
+<div style="height: 720px;">
+<button type="button" onclick="startScanner()"><i class="fa fa-camera">Scan Barcode</i></button>
+<div id="qr-reader" style="width: 600px"></div>
+</div>
+<script>
+     function startScanner() {
+            Html5Qrcode.getCameras().then(devices => {
+                if (devices && devices.length) {
+                    const cameraId = devices[0].id;
+                    
+                    const html5QrCode = new Html5Qrcode(
+                        "qr-reader"
+                    );
+                  const config = { fps: 30, qrbox: "100%" };
+                // If you want to prefer back camera
+                html5QrCode.start({ facingMode: "environment" }, config, onScanSuccess);
+                }
+            }).catch(err => {
+                // handle error
+            });
+        }
+
+        function onScanSuccess(decodedText, decodedResult) {
+            // handle success
+        }
+</script>
+</body>
+</html>
