@@ -28,17 +28,16 @@ Challenge ของผม :
 
 Overview หน้าตาของโปรแกรมหลังเสร็จ (ขอเบลอบางส่วนนะครับเนื่องจากเป็นทรัพย์สินของบริษัท)
 - หน้าแรกแสดงข้อแนะนำการผลิต
-
-![master1](https://github.com/zRedHox/Django_ERP/assets/30298730/f8bbb239-1c0b-4d36-a6ab-086503df7326)
+![master1](https://github.com/zRedHox/Django_ERP/assets/30298730/d0901e13-3a1f-4959-b509-7e7d6b60cb3e)
 
 - หน้าสอง แสดงรายระเอียดทั่วไป
-![master2](https://github.com/zRedHox/Django_ERP/assets/30298730/424ec52f-bec4-4e22-812d-1665850e770a)
+![master2](https://github.com/zRedHox/Django_ERP/assets/30298730/ca2f0e68-befa-4c3b-9051-109dff52511c)
 
 - หน้าสาม แสดงรายละเอียดองค์ประกอบที่ใช้ (สี,โลหะ,เพชร-พลอย , ส่วนประกอบอื่นๆ)
-![master3](https://github.com/zRedHox/Django_ERP/assets/30298730/162000db-6fe5-4eb6-b0d9-29fae4ef2d6d)
+![master3](https://github.com/zRedHox/Django_ERP/assets/30298730/022cfc5c-ff1c-4f29-99f5-d808f1b3d108)
 
 - หน้าสี่ แสดงเส้นทางการผลิต Routing
-![master4](https://github.com/zRedHox/Django_ERP/assets/30298730/6b691b5a-5611-47d7-ad4a-dcdf3e00da32)
+![master4](https://github.com/zRedHox/Django_ERP/assets/30298730/731fd624-6aa3-4017-8bef-da5d0ff573a3)
 
 
 
